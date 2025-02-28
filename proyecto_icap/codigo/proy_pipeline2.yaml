@@ -1,0 +1,117 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  # Lambda Function for Data Processing
+  LambdaFunctionData:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: proy-temperature-lambda
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/LabRole
+      Handler: lambda_pipeline.lambda_handler
+      Runtime: python3.12
+      Code:
+        S3Bucket: proy-codigos-martin-solano
+        S3Key: lambda_pipeline.zip
+
+  # Lambda Function for configuring the notification
+  NotificationConfigurationFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: ConfigureS3NotificationFunction
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/LabRole
+      Handler: index.handler
+      Runtime: python3.12
+      Timeout: 300  # 5 minutes timeout
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+
+          def handler(event, context):
+              try:
+                  if event['RequestType'] in ['Create', 'Update']:
+                      s3 = boto3.client('s3')
+                      bucket_name = event['ResourceProperties']['BucketName']
+                      lambda_arn = event['ResourceProperties']['LambdaArn']
+
+                      # Configuring bucket notification
+                      notification_configuration = {
+                          'LambdaFunctionConfigurations': [
+                              {
+                                  'LambdaFunctionArn': lambda_arn,
+                                  'Events': ['s3:ObjectCreated:*']
+                              }
+                          ]
+                      }
+
+                      # Apply notification configuration to the S3 bucket
+                      s3.put_bucket_notification_configuration(
+                          Bucket=bucket_name,
+                          NotificationConfiguration=notification_configuration
+                      )
+
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+              except Exception as e:
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {'Error': str(e)})
+
+  # Custom Resource to apply the notification configuration to S3
+  BucketNotificationConfiguration:
+    Type: Custom::S3BucketNotification
+    Properties:
+      ServiceToken: !GetAtt NotificationConfigurationFunction.Arn
+      BucketName: !ImportValue proy-datos-martin-solano-name
+      LambdaArn: !GetAtt LambdaFunctionData.Arn
+
+  # Lambda Permission for S3 invocation (allow S3 to invoke Lambda)
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaFunctionData
+      Principal: s3.amazonaws.com
+      SourceArn: !ImportValue proy-datos-martin-solano-arn
+
+  # Lambda Function for Alarm Processing
+  LambdaFunctionAlarm:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: proy-alarma-lambda
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/LabRole
+      Handler: lambda_alarma.lambda_handler
+      Runtime: python3.12
+      Code:
+        S3Bucket: proy-codigos-martin-solano
+        S3Key: lambda_alarma.zip
+
+  # Lambda Permission for SNS invocation
+  LambdaInvokeSNS:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaFunctionAlarm
+      Principal: sns.amazonaws.com
+
+  # DynamoDB Stream to Lambda configuration
+  DynamoDBStreamToLambda:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 5
+      EventSourceArn: !ImportValue proy-datospipeline-table-stream-arn
+      FunctionName: !Ref LambdaFunctionAlarm
+      Enabled: true
+      StartingPosition: TRIM_HORIZON
+
+  # Lambda permission for DynamoDB Stream invocation
+  LambdaInvokePermissionDynamoDB:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaFunctionAlarm
+      Principal: dynamodb.amazonaws.com
+      SourceArn: !ImportValue proy-datospipeline-table-stream-arn
+
+Outputs:
+  LambdaFunctionDataArn:
+    Value: !GetAtt LambdaFunctionData.Arn
+    Export:
+      Name: LambdaFunctionDataArn
