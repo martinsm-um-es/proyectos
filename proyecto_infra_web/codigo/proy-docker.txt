@@ -1,0 +1,27 @@
+ssh -i prac3-keypair.pem ec2-user@44.212.8.225
+
+mkdir flask_docker
+
+nano flask_docker/application.py
+
+nano flask_docker/requirements.txt
+
+nano flask_docker/Dockerfile
+
+cd flask_docker
+
+sudo systemctl start docker
+
+sudo docker build -t flask_container .
+
+sudo docker images
+
+sudo docker run -p 5000:5000 -d flask_container
+
+sudo docker ps -a
+
+aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 279733836385.dkr.ecr.us-east-1.amazonaws.com
+
+sudo docker tag flask_container:latest 279733836385.dkr.ecr.us-east-1.amazonaws.com/proy-repo:flask_container
+
+sudo docker push 279733836385.dkr.ecr.us-east-1.amazonaws.com/proy-repo:flask_container
