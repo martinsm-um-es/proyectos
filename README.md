@@ -10,7 +10,7 @@ Este repositorio contiene una colección de proyectos académicos y personales d
 
 ### 2. Análisis de Datos ACB (`proyecto_analisis_acb`)
 **Descripción:** Análisis estadístico y visualización de datos de la liga de baloncesto ACB.
-**Tecnologías:** R / Python (según corresponda), Data Analysis.
+**Tecnologías:** R, Data Analysis.
 
 ### 3. Infraestructura Web (`proyecto_infra_web`)
 **Descripción:** Proyecto relacionado con el despliegue y gestión de infraestructuras web.
