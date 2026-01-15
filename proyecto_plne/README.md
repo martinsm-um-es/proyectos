@@ -15,12 +15,16 @@ El objetivo del proyecto es aplicar técnicas de recuperación y procesamiento d
 
 ## Estructura del Repositorio
 
-Los archivos principales incluidos en esta entrega son:
+El proyecto se organiza en la carpeta `proyecto_plne/` con la siguiente estructura:
 
-- **`main.ipynb`**: Cuaderno Jupyter que contiene todo el flujo de trabajo documentado, con las celdas ejecutadas mostrando los resultados del análisis y procesamiento.
-- **`BM25.py`**: Script de Python con la implementación de la clase y métodos para la vectorización utilizando el algoritmo BM25.
-- **`datos_proyecto.zip`**: Dataset comprimido que contiene los datos en crudo recopilados de Reddit en formato JSON.
-- **`output_proyecto.zip`**: Archivo comprimido con todas las salidas y documentos generados por el sistema (también en JSON).
+- **src/**: Contiene el código fuente.
+  - `main.ipynb`: Cuaderno principal con el análisis y ejecución.
+  - `BM25.py`: Módulo de implementación del algoritmo BM25.
+- **data/**: Contiene los conjuntos de datos y salidas.
+  - `datos_proyecto.zip`: Datos crudos en JSON.
+  - `output_proyecto.zip`: Resultados generados.
+- **proyecto_plne.pdf**: Versión en PDF del cuaderno para facilitar su lectura.
+- **README.md**: Información general del proyecto.
 
 ## Notas Adicionales
 
