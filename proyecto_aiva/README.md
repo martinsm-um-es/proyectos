@@ -16,6 +16,8 @@ El conjunto de datos utilizado es **MVTec Screws V1.0**.
 *   **`TF02_AIVA.pdf`**: Memoria del proyecto.
 *   **`Presentación_AIVA.pdf`**: Diapositivas de la presentación.
 *   **`video_AIVA.mp4`**: Video demostrativo.
+*   **`proyecto_aiva_notebook.pdf`**: Versión en PDF del notebook `main.ipynb`.
+    - *Nota: Los outputs largos han sido truncados en el PDF para mejorar la legibilidad. Para ver los outputs completos, consultar el archivo `src/main.ipynb`.*
 
 ## Archivos
 *   [Memoria (PDF)](./TF02_AIVA.pdf)

@@ -24,6 +24,7 @@ El proyecto se organiza en la carpeta `proyecto_plne/` con la siguiente estructu
   - `datos_proyecto.zip`: Datos crudos en JSON.
   - `output_proyecto.zip`: Resultados generados.
 - **proyecto_plne.pdf**: Versión en PDF del cuaderno para facilitar su lectura.
+  - *Nota: Los outputs largos han sido truncados en el PDF para mejorar la legibilidad. Para ver los outputs completos, consultar el archivo `main.ipynb`.*
 - **README.md**: Información general del proyecto.
 
 ## Notas Adicionales
