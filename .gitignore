@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+proyecto_aiva/data/TF_AIVA_datos.zip
+notebook.tex
+notebook.log
+notebook.aux
+notebook.out
